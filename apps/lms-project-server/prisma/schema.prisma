@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DB_URL")
 }
 
@@ -12,7 +12,7 @@ model User {
   email           String?      @unique
   enrollments     Enrollment[]
   firstName       String?
-  id              String       @id @default(cuid())
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
   lastName        String?
   password        String
   progresses      Progress[]
@@ -27,11 +27,11 @@ model Course {
   description String?
   endDate     DateTime?
   enrollments Enrollment[]
-  id          String       @id @default(cuid())
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   lessons     Lesson[]
   startDate   DateTime?
   teacher     User?        @relation(fields: [teacherId], references: [id])
-  teacherId   String?
+  teacherId   String?      @db.ObjectId
   title       String?
   updatedAt   DateTime     @updatedAt
 }
@@ -39,9 +39,9 @@ model Course {
 model Lesson {
   content    String?
   course     Course?    @relation(fields: [courseId], references: [id])
-  courseId   String?
+  courseId   String?    @db.ObjectId
   createdAt  DateTime   @default(now())
-  id         String     @id @default(cuid())
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
   progresses Progress[]
   title      String?
   typeField  String?
@@ -51,11 +51,11 @@ model Lesson {
 
 model Enrollment {
   course    Course?  @relation(fields: [courseId], references: [id])
-  courseId  String?
+  courseId  String?  @db.ObjectId
   createdAt DateTime @default(now())
-  id        String   @id @default(cuid())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   student   User?    @relation(fields: [studentId], references: [id])
-  studentId String?
+  studentId String?  @db.ObjectId
   updatedAt DateTime @updatedAt
 }
 
@@ -63,10 +63,10 @@ model Progress {
   completed   Boolean?
   completedAt DateTime?
   createdAt   DateTime  @default(now())
-  id          String    @id @default(cuid())
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   lesson      Lesson?   @relation(fields: [lessonId], references: [id])
-  lessonId    String?
+  lessonId    String?   @db.ObjectId
   student     User?     @relation(fields: [studentId], references: [id])
-  studentId   String?
+  studentId   String?   @db.ObjectId
   updatedAt   DateTime  @updatedAt
 }
